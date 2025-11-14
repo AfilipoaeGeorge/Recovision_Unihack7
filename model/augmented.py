@@ -8,7 +8,7 @@ INPUT_DIR = "scars_images"
 
 OUTPUT_DIR = "dataset_augmented"
 
-AUGS_PER_IMAGE = 5
+AUGS_PER_IMAGE = 7
 
 random.seed(42)
 base_transform = A.Compose(
@@ -21,13 +21,10 @@ base_transform = A.Compose(
             brightness_limit=0.2,
             contrast_limit=0.15,
             p=0.5
-        ),
+        )
 
-        A.GaussNoise(var_limit=(10.0, 30.0), p=0.3),
 
-        A.MotionBlur(blur_limit=3, p=0.2),
-
-        A.RandomShadow(p=0.2),
+       
     ]
 )
 
