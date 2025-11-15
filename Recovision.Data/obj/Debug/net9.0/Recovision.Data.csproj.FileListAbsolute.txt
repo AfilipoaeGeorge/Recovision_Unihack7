@@ -1,0 +1,13 @@
+D:\Recovision_Unihack7\Recovision.Data\bin\Debug\net9.0\Recovision.Data.deps.json
+D:\Recovision_Unihack7\Recovision.Data\bin\Debug\net9.0\Recovision.Data.dll
+D:\Recovision_Unihack7\Recovision.Data\bin\Debug\net9.0\Recovision.Data.pdb
+D:\Recovision_Unihack7\Recovision.Data\obj\Debug\net9.0\Recovision.Data.csproj.AssemblyReference.cache
+D:\Recovision_Unihack7\Recovision.Data\obj\Debug\net9.0\Recovision.Data.GeneratedMSBuildEditorConfig.editorconfig
+D:\Recovision_Unihack7\Recovision.Data\obj\Debug\net9.0\Recovision.Data.AssemblyInfoInputs.cache
+D:\Recovision_Unihack7\Recovision.Data\obj\Debug\net9.0\Recovision.Data.AssemblyInfo.cs
+D:\Recovision_Unihack7\Recovision.Data\obj\Debug\net9.0\Recovision.Data.csproj.CoreCompileInputs.cache
+D:\Recovision_Unihack7\Recovision.Data\obj\Debug\net9.0\Recovision.Data.sourcelink.json
+D:\Recovision_Unihack7\Recovision.Data\obj\Debug\net9.0\Recovision.Data.dll
+D:\Recovision_Unihack7\Recovision.Data\obj\Debug\net9.0\refint\Recovision.Data.dll
+D:\Recovision_Unihack7\Recovision.Data\obj\Debug\net9.0\Recovision.Data.pdb
+D:\Recovision_Unihack7\Recovision.Data\obj\Debug\net9.0\ref\Recovision.Data.dll

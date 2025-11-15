@@ -1,0 +1,16 @@
+D:\Recovision_Unihack7\Recovision.Core\bin\Debug\net9.0\Recovision.Core.deps.json
+D:\Recovision_Unihack7\Recovision.Core\bin\Debug\net9.0\Recovision.Core.dll
+D:\Recovision_Unihack7\Recovision.Core\bin\Debug\net9.0\Recovision.Core.pdb
+D:\Recovision_Unihack7\Recovision.Core\obj\Debug\net9.0\Recovision.Core.GeneratedMSBuildEditorConfig.editorconfig
+D:\Recovision_Unihack7\Recovision.Core\obj\Debug\net9.0\Recovision.Core.AssemblyInfoInputs.cache
+D:\Recovision_Unihack7\Recovision.Core\obj\Debug\net9.0\Recovision.Core.AssemblyInfo.cs
+D:\Recovision_Unihack7\Recovision.Core\obj\Debug\net9.0\Recovision.Core.csproj.CoreCompileInputs.cache
+D:\Recovision_Unihack7\Recovision.Core\obj\Debug\net9.0\Recovision.Core.sourcelink.json
+D:\Recovision_Unihack7\Recovision.Core\obj\Debug\net9.0\Recovision.Core.dll
+D:\Recovision_Unihack7\Recovision.Core\obj\Debug\net9.0\refint\Recovision.Core.dll
+D:\Recovision_Unihack7\Recovision.Core\obj\Debug\net9.0\Recovision.Core.pdb
+D:\Recovision_Unihack7\Recovision.Core\obj\Debug\net9.0\ref\Recovision.Core.dll
+D:\Recovision_Unihack7\Recovision.Core\bin\Debug\net9.0\Recovision.Data.dll
+D:\Recovision_Unihack7\Recovision.Core\bin\Debug\net9.0\Recovision.Data.pdb
+D:\Recovision_Unihack7\Recovision.Core\obj\Debug\net9.0\Recovision.Core.csproj.AssemblyReference.cache
+D:\Recovision_Unihack7\Recovision.Core\obj\Debug\net9.0\Recovisi.B2A60DCA.Up2Date
