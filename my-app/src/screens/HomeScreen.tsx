@@ -15,6 +15,7 @@ import { ColorPalette } from '../../res/colors';
 import { RootStackParamList } from '../navigation/types';
 import { useThemeColors } from '../hooks/useThemeColors';
 import { useTranslation } from '../hooks/useTranslation';
+import { useAuth } from '../context/AuthContext';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
@@ -62,15 +63,18 @@ export function HomeScreen({ navigation }: Props) {
   const t = useTranslation();
   const colors = useThemeColors();
   const styles = useMemo(() => createStyles(colors), [colors]);
+  const { logout } = useAuth();
   const gradientStops = useMemo(
     () => [colors.background, colors.surface, colors.card],
     [colors],
   );
-  const handleLogout = () =>
+  const handleLogout = async () => {
+    await logout();
     navigation.reset({
       index: 0,
       routes: [{ name: 'Login' }],
     });
+  };
   return (
     <LinearGradient
       style={styles.gradient}

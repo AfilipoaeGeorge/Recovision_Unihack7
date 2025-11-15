@@ -11,6 +11,7 @@ import { RootStackParamList } from '../navigation/types';
 import { useTranslation } from '../hooks/useTranslation';
 import { API_URL } from '../config/api';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useAuth } from '../context/AuthContext';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
@@ -20,6 +21,7 @@ export function LoginScreen({ navigation }: Props) {
   const t = useTranslation();
   const colors = useThemeColors();
   const styles = useMemo(() => createStyles(colors), [colors]);
+  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<{ email?: string; password?: string }>(
@@ -62,6 +64,7 @@ export function LoginScreen({ navigation }: Props) {
 
       await AsyncStorage.setItem('@authToken', data.token);
       await AsyncStorage.setItem('@userData', JSON.stringify(data));
+      await login();
 
       // console.log('LOGIN SUCCESS:', data); 
       // console.log('TOKENUL ESTE:', data.token);
