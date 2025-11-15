@@ -1,6 +1,6 @@
 fastapi
-uvicorn[standard]
-pillow
+uvicorn
+gunicorn
 torch
 torchvision
-# + orice altceva mai folosește predict.py (albumentations, numpy etc.)
+Pillow

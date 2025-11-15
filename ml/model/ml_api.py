@@ -1,35 +1,51 @@
 from fastapi import FastAPI, UploadFile, File
-from fastapi.responses import JSONResponse
-import tempfile
+from fastapi.middleware.cors import CORSMiddleware
+from predict import predict   # folosim direct funcția ta
 import os
+from uuid import uuid4
 
-from predict import predict  # folosim predict(image_path, model_path)
+# ne asigurăm că există folderul uploads (pentru a păstra pozele)
+UPLOAD_DIR = "uploads"
+os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 app = FastAPI(
     title="Recovision ML API",
     description="API pentru clasificarea cicatricilor",
-    version="1.0.0",
+    version="1.0.0"
 )
 
-MODEL_PATH = "model_efficientnet.pth"
+# CORS - ca să poți apela din frontend (React / altceva)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # pentru dev, poți restrânge pentru producție
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+@app.get("/")
+def read_root():
+    return {"status": "ok", "message": "Recovision ML API este pornit 🚀"}
+
 
 @app.post("/predict")
 async def predict_endpoint(file: UploadFile = File(...)):
-    try:
-        suffix = os.path.splitext(file.filename)[1]  # ex: .jpg, .png
-        with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
-            temp_path = tmp.name
-            content = await file.read()
-            tmp.write(content)
+    # generăm un nume unic pentru fișier
+    ext = os.path.splitext(file.filename)[1] or ".png"
+    unique_name = f"{uuid4().hex}{ext}"
+    save_path = os.path.join(UPLOAD_DIR, unique_name)
 
-        label = predict(temp_path, MODEL_PATH)
+    # salvăm imaginea pe disc (ca să o „păstrăm undeva”)
+    with open(save_path, "wb") as f:
+        content = await file.read()
+        f.write(content)
 
-        os.remove(temp_path)
+    # apelăm funcția ta de ML
+    result = predict(save_path, model_path="model_efficientnet.pth")
 
-        return {"label": label}
-
-    except Exception as e:
-        return JSONResponse(
-            status_code=500,
-            content={"error": str(e)}
-        )
+    # poți returna și path-ul dacă vrei să știi ulterior unde e imaginea
+    return {
+        "prediction": result,
+        "image_path": save_path
+    }
