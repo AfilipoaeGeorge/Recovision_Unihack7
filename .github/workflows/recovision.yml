@@ -1,0 +1,64 @@
+name: Publish Recovision Backend
+
+on:
+  push:
+    branches: [Backend]
+
+env:
+  AZURE_WEBAPP_NAME: recovisionbackendwindows
+  AZURE_WEBAPP_PACKAGE_PATH: "./publish"
+
+jobs:
+  build-and-deploy:
+    runs-on: windows-latest
+    
+    steps:
+      # 1️⃣ Checkout source code
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      # 2️⃣ Setup .NET 9
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '9.0.x'
+      
+      # 3️⃣ Clean publish folder
+      - name: Clean publish folder
+        run: |
+          if (Test-Path -Path "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}") {
+            Remove-Item -Recurse -Force "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
+          }
+      
+      # 4️⃣ Restore dependencies
+      - name: Restore dependencies
+        run: dotnet restore ./Recovision.sln
+      
+      # 5️⃣ Build solution
+      - name: Build solution
+        run: dotnet build ./Recovision.sln --configuration Release --no-restore
+      
+      # 6️⃣ Publish project
+      - name: Publish project
+        run: dotnet publish ./Recovision.sln --configuration Release --no-build --output "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
+      
+      # 7️⃣ Verify publish output
+      - name: Verify publish contents
+        run: |
+          Write-Host "=== Files in publish folder ==="
+          Get-ChildItem "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}" | Select-Object Name, Length
+          Write-Host ""
+          Write-Host "Looking for web.config..."
+          if (Test-Path "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/web.config") {
+            Write-Host "✓ web.config found"
+          } else {
+            Write-Host "✗ web.config NOT found - this may cause deployment issues!"
+          }
+      
+      # 8️⃣ Deploy to Azure App Service (Direct folder deployment)
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
+          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
