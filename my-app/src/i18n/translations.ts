@@ -56,6 +56,10 @@ export type TranslationKey =
   | 'settings.camera.description'
   | 'settings.theme.title'
   | 'settings.theme.description'
+  | 'settings.theme.enabled'
+  | 'settings.theme.disabled'
+  | 'settings.theme.on'
+  | 'settings.theme.off'
   | 'settings.language.title'
   | 'settings.language.description'
   | 'currentSurgery.title'
@@ -132,6 +136,10 @@ export const translations: Record<'en' | 'ro', Record<TranslationKey, string>> =
       'Allow the app to open the camera within the profile and surgery modules.',
     'settings.theme.title': 'Dark mode',
     'settings.theme.description': 'Currently',
+    'settings.theme.enabled': 'enabled',
+    'settings.theme.disabled': 'disabled',
+    'settings.theme.on': 'On',
+    'settings.theme.off': 'Off',
     'settings.language.title': 'Primary language',
     'settings.language.description': 'Switch between English and Romanian instantly.',
     'settings.language.english': 'English',
@@ -211,6 +219,10 @@ export const translations: Record<'en' | 'ro', Record<TranslationKey, string>> =
       'Permite deschiderea camerei în profil și în modulul de operații.',
     'settings.theme.title': 'Mod întunecat',
     'settings.theme.description': 'În prezent',
+    'settings.theme.enabled': 'activ',
+    'settings.theme.disabled': 'dezactivat',
+    'settings.theme.on': 'Pornit',
+    'settings.theme.off': 'Oprit',
     'settings.language.title': 'Limba principală',
     'settings.language.description': 'Schimbă instant între engleză și română.',
     'settings.language.english': 'English',

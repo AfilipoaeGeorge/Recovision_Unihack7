@@ -15,12 +15,14 @@ import { ScreenHeader } from '../../components/ScreenHeader';
 import { RootStackParamList } from '../navigation/types';
 import { useSettings } from '../context/SettingsContext';
 import { useThemeColors } from '../hooks/useThemeColors';
+import { useTranslation } from '../hooks/useTranslation';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Settings'>;
 
 export function SettingsScreen({ navigation }: Props) {
   const { cameraEnabled, theme, language, toggleCamera, toggleTheme, toggleLanguage } =
     useSettings();
+  const t = useTranslation();
   const colors = useThemeColors();
   const styles = useMemo(() => createStyles(colors), [colors]);
   const previewGradient = useMemo(
@@ -33,16 +35,16 @@ export function SettingsScreen({ navigation }: Props) {
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.content}>
           <ScreenHeader
-            title="Settings"
-            subtitle="Quick preferences for camera, theme, and language."
+            title={t('settings.title')}
+            subtitle={t('settings.subtitle')}
             onBack={() => navigation.goBack()}
           />
 
           <View style={styles.card}>
-            <Text style={styles.cardTitle}>Camera access</Text>
+            <Text style={styles.cardTitle}>{t('settings.camera.title')}</Text>
             <View style={styles.row}>
               <Text style={styles.body}>
-                Allow the app to open the camera within the profile and surgery modules.
+                {t('settings.camera.description')}
               </Text>
               <Switch
                 value={cameraEnabled}
@@ -53,28 +55,28 @@ export function SettingsScreen({ navigation }: Props) {
           </View>
 
           <View style={styles.card}>
-            <Text style={styles.cardTitle}>Appearance</Text>
+            <Text style={styles.cardTitle}>{t('settings.theme.title')}</Text>
             <Pressable style={styles.rowBetween} onPress={toggleTheme}>
               <View>
-                <Text style={styles.body}>Dark mode</Text>
+                <Text style={styles.body}>{t('settings.theme.title')}</Text>
                 <Text style={styles.caption}>
-                  Currently {theme === 'dark' ? 'enabled' : 'disabled'}
+                  {t('settings.theme.description')} {theme === 'dark' ? t('settings.theme.enabled') : t('settings.theme.disabled')}
                 </Text>
               </View>
-              <Text style={styles.value}>{theme === 'dark' ? 'On' : 'Off'}</Text>
+              <Text style={styles.value}>{theme === 'dark' ? t('settings.theme.on') : t('settings.theme.off')}</Text>
             </Pressable>
           </View>
 
           <View style={styles.card}>
-            <Text style={styles.cardTitle}>Language</Text>
+            <Text style={styles.cardTitle}>{t('settings.language.title')}</Text>
             <Pressable style={styles.rowBetween} onPress={toggleLanguage}>
               <View>
-                <Text style={styles.body}>Primary language</Text>
+                <Text style={styles.body}>{t('settings.language.title')}</Text>
                 <Text style={styles.caption}>
-                  Switch between English and Romanian instantly.
+                  {t('settings.language.description')}
                 </Text>
               </View>
-              <Text style={styles.value}>{language === 'en' ? 'English' : 'Română'}</Text>
+              <Text style={styles.value}>{language === 'en' ? t('settings.language.english') : t('settings.language.romanian')}</Text>
             </Pressable>
           </View>
         </View>
