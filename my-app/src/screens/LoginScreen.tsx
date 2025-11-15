@@ -9,6 +9,8 @@ import { ColorPalette } from '../../res/colors';
 import { useThemeColors } from '../hooks/useThemeColors';
 import { RootStackParamList } from '../navigation/types';
 import { useTranslation } from '../hooks/useTranslation';
+import { API_URL } from '../config/api';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
@@ -36,14 +38,42 @@ export function LoginScreen({ navigation }: Props) {
     return Object.keys(nextErrors).length === 0;
   };
 
-  const handleLogin = () => {
-    if (validate()) {
-      // placeholder for auth call
-      console.log('Login payload', { email, password });
+  const handleLogin = async () => {
+    if (!validate()) return;
+
+    try {
+      const response = await fetch(`${API_URL}/Auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          Email: email, 
+          Password: password, 
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.error || data.message || "incorrect credentials");
+        return;
+      }
+
+      await AsyncStorage.setItem('@authToken', data.token);
+      await AsyncStorage.setItem('@userData', JSON.stringify(data));
+
+      // console.log('LOGIN SUCCESS:', data); 
+      // console.log('TOKENUL ESTE:', data.token);
+    
       navigation.reset({
         index: 0,
         routes: [{ name: 'Home' }],
       });
+
+    } catch (err) {
+      console.error(err);
+      alert("Cannot connect to server");
     }
   };
 
