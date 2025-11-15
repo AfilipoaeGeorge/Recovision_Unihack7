@@ -7,10 +7,12 @@ import { ColorPalette } from '../../res/colors';
 import { ScreenHeader } from '../../components/ScreenHeader';
 import { RootStackParamList } from '../navigation/types';
 import { useThemeColors } from '../hooks/useThemeColors';
+import { useTranslation } from '../hooks/useTranslation';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Exercise'>;
 
 export function ExerciseScreen({ navigation }: Props) {
+  const t = useTranslation();
   const colors = useThemeColors();
   const styles = useMemo(() => createStyles(colors), [colors]);
   const gradientStops = useMemo(
@@ -25,8 +27,8 @@ export function ExerciseScreen({ navigation }: Props) {
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.content}>
           <ScreenHeader
-            title="Exercises"
-            subtitle="Guided routines, streaks, and progress charts are coming soon."
+            title={t('exercise.title')}
+            subtitle={t('exercise.subtitle')}
             onBack={() => navigation.goBack()}
           />
         </View>

@@ -8,6 +8,7 @@ import { AuthLink } from '../../components/AuthLink';
 import { ColorPalette } from '../../res/colors';
 import { useThemeColors } from '../hooks/useThemeColors';
 import { RootStackParamList } from '../navigation/types';
+import { useTranslation } from '../hooks/useTranslation';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Register'>;
 
@@ -15,6 +16,7 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const phoneRegex = /^[0-9+\-()\s]{6,}$/;
 
 export function RegisterScreen({ navigation }: Props) {
+  const t = useTranslation();
   const colors = useThemeColors();
   const styles = useMemo(() => createStyles(colors), [colors]);
   const [form, setForm] = useState({
@@ -32,16 +34,16 @@ export function RegisterScreen({ navigation }: Props) {
   const validate = () => {
     const nextErrors: Partial<typeof form> = {};
     if (!form.firstName.trim()) {
-      nextErrors.firstName = 'First name is required.';
+      nextErrors.firstName = t('auth.register.firstNameError');
     }
     if (!form.lastName.trim()) {
-      nextErrors.lastName = 'Last name is required.';
+      nextErrors.lastName = t('auth.register.lastNameError');
     }
     if (!emailRegex.test(form.email)) {
-      nextErrors.email = 'Add a valid email.';
+      nextErrors.email = t('auth.register.emailError');
     }
     if (!phoneRegex.test(form.phone)) {
-      nextErrors.phone = 'Add a reachable phone number.';
+      nextErrors.phone = t('auth.register.phoneError');
     }
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
@@ -60,33 +62,33 @@ export function RegisterScreen({ navigation }: Props) {
       behavior={Platform.select({ ios: 'padding', android: undefined })}
     >
       <AuthLayout
-        title="Create account"
-        subtitle="Let’s set up your profile so we can personalize your recovery."
+        title={t('auth.register.title')}
+        subtitle={t('auth.register.subtitle')}
         footer={
           <AuthLink
-            label="Already have an account?"
-            actionLabel="Back to login"
+            label={t('auth.register.alreadyHaveAccount')}
+            actionLabel={t('auth.register.back')}
             onPress={() => navigation.navigate('Login')}
           />
         }
       >
         <TextField
-          label="First name"
-          placeholder="John"
+          label={t('auth.register.firstName')}
+          placeholder={t('auth.register.firstNamePlaceholder')}
           value={form.firstName}
           onChangeText={(value) => updateField('firstName', value)}
           error={errors.firstName}
         />
         <TextField
-          label="Last name"
-          placeholder="Doe"
+          label={t('auth.register.lastName')}
+          placeholder={t('auth.register.lastNamePlaceholder')}
           value={form.lastName}
           onChangeText={(value) => updateField('lastName', value)}
           error={errors.lastName}
         />
         <TextField
-          label="Email"
-          placeholder="john.doe@email.com"
+          label={t('auth.register.email')}
+          placeholder={t('auth.register.emailPlaceholder')}
           keyboardType="email-address"
           autoCapitalize="none"
           value={form.email}
@@ -94,14 +96,14 @@ export function RegisterScreen({ navigation }: Props) {
           error={errors.email}
         />
         <TextField
-          label="Phone number"
-          placeholder="+40 712 345 678"
+          label={t('auth.register.phone')}
+          placeholder={t('auth.register.phonePlaceholder')}
           keyboardType="phone-pad"
           value={form.phone}
           onChangeText={(value) => updateField('phone', value)}
           error={errors.phone}
         />
-        <PrimaryButton label="Register" onPress={handleRegister} />
+        <PrimaryButton label={t('auth.register.button')} onPress={handleRegister} />
       </AuthLayout>
     </KeyboardAvoidingView>
   );

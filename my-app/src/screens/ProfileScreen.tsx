@@ -22,6 +22,7 @@ import { ScreenHeader } from '../../components/ScreenHeader';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/types';
 import { useThemeColors } from '../hooks/useThemeColors';
+import { useTranslation } from '../hooks/useTranslation';
 
 const profileData = {
   cnp: '1700110250546',
@@ -46,6 +47,7 @@ const profileData = {
 type Props = NativeStackScreenProps<RootStackParamList, 'Profile'>;
 
 export function ProfileScreen({ navigation }: Props) {
+  const t = useTranslation();
   const [avatarUri, setAvatarUri] = useState(profileData.avatarUrl);
   const [idDocumentUri, setIdDocumentUri] = useState(profileData.idImageUrl);
   const [pickerTarget, setPickerTarget] = useState<'avatar' | 'document' | null>(
@@ -87,7 +89,7 @@ export function ProfileScreen({ navigation }: Props) {
       avatarUri,
       idDocumentUri,
     });
-    Alert.alert('Saved', 'Your profile has been updated.');
+    Alert.alert(t('profile.saved'), t('profile.savedMessage'));
   };
 
   const handlePick = useCallback(
@@ -98,7 +100,7 @@ export function ProfileScreen({ navigation }: Props) {
         if (source === 'camera') {
           const { status } = await ImagePicker.requestCameraPermissionsAsync();
           if (status !== 'granted') {
-            Alert.alert('Permission needed', 'Camera access is required.');
+            Alert.alert(t('profile.permission.needed'), t('profile.permission.camera'));
             return;
           }
           const result = await ImagePicker.launchCameraAsync({
@@ -111,7 +113,7 @@ export function ProfileScreen({ navigation }: Props) {
         } else {
           const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
           if (status !== 'granted') {
-            Alert.alert('Permission needed', 'Gallery access is required.');
+            Alert.alert(t('profile.permission.needed'), t('profile.permission.gallery'));
             return;
           }
           const result = await ImagePicker.launchImageLibraryAsync({
@@ -127,10 +129,10 @@ export function ProfileScreen({ navigation }: Props) {
       try {
         await launch();
       } catch {
-        Alert.alert('Something went wrong', 'Please try again in a moment.');
+        Alert.alert(t('profile.error.title'), t('profile.error.message'));
       }
     },
-    [],
+    [t],
   );
 
   const openPicker = (target: 'avatar' | 'document') => {
@@ -175,8 +177,8 @@ export function ProfileScreen({ navigation }: Props) {
           showsVerticalScrollIndicator={false}
         >
           <ScreenHeader
-            title="Identity details"
-            subtitle="Update your card photo and keep your recovery file accurate."
+            title={t('profile.title')}
+            subtitle={t('profile.subtitle')}
             onBack={() => navigation.goBack()}
           />
 
@@ -193,9 +195,9 @@ export function ProfileScreen({ navigation }: Props) {
               )}
             </View>
             <View style={styles.avatarText}>
-              <Text style={styles.avatarTitle}>Profile photo</Text>
+              <Text style={styles.avatarTitle}>{t('profile.avatar.title')}</Text>
               <Text style={styles.avatarSubtitle}>
-                Tap to capture or upload a new photo
+                {t('profile.avatar.subtitle')}
               </Text>
             </View>
           </Pressable>
@@ -214,88 +216,88 @@ export function ProfileScreen({ navigation }: Props) {
               )}
             </View>
             <View style={styles.avatarText}>
-              <Text style={styles.avatarTitle}>ID document</Text>
+              <Text style={styles.avatarTitle}>{t('profile.document.title')}</Text>
               <Text style={styles.avatarSubtitle}>
-                Capture or upload your ID so we can extract the details.
+                {t('profile.document.subtitle')}
               </Text>
             </View>
           </Pressable>
 
           <View style={styles.infoCard}>
             <TextField
-              label="CNP"
+              label={t('profile.form.cnp')}
               value={form.cnp}
               onChangeText={(text) => updateField('cnp', text)}
             />
             <TextField
-              label="Last name"
+              label={t('profile.form.lastName')}
               value={form.lastName}
               onChangeText={(text) => updateField('lastName', text)}
             />
             <TextField
-              label="First name"
+              label={t('profile.form.firstName')}
               value={form.firstName}
               onChangeText={(text) => updateField('firstName', text)}
             />
             <TextField
-              label="Date of birth"
+              label={t('profile.form.birthDate')}
               placeholder="YYYY-MM-DD"
               value={form.dateOfBirth}
               onChangeText={(text) => updateField('dateOfBirth', text)}
             />
             <TextField
-              label="Birth place"
+              label={t('profile.form.birthPlace')}
               value={form.birthPlace}
               onChangeText={(text) => updateField('birthPlace', text)}
             />
             <TextField
-              label="ID series"
+              label={t('profile.form.idSeries')}
               value={form.idSeries}
               onChangeText={(text) => updateField('idSeries', text)}
             />
             <TextField
-              label="ID number"
+              label={t('profile.form.idNumber')}
               value={form.idNumber}
               onChangeText={(text) => updateField('idNumber', text)}
             />
             <TextField
-              label="Sex"
+              label={t('profile.form.sex')}
               value={form.sex}
               onChangeText={(text) => updateField('sex', text)}
             />
             <TextField
-              label="Citizenship"
+              label={t('profile.form.citizenship')}
               value={form.citizenship}
               onChangeText={(text) => updateField('citizenship', text)}
             />
             <TextField
-              label="Address"
+              label={t('profile.form.address')}
               multiline
               value={form.address}
               onChangeText={(text) => updateField('address', text)}
             />
             <TextField
-              label="Issue date"
+              label={t('profile.form.issueDate')}
               value={form.issueDate}
               onChangeText={(text) => updateField('issueDate', text)}
             />
             <TextField
-              label="Expiry date"
+              label={t('profile.form.expiryDate')}
               value={form.expiryDate}
               onChangeText={(text) => updateField('expiryDate', text)}
             />
             <TextField
-              label="Issued by"
+              label={t('profile.form.issuedBy')}
               value={form.issuedBy}
               onChangeText={(text) => updateField('issuedBy', text)}
             />
             <TextField
-              label="User ID"
+              label={t('profile.form.userId')}
               value={form.userId}
               onChangeText={(text) => updateField('userId', text)}
             />
           </View>
-          <PrimaryButton label="Save changes" onPress={handleSave} />
+          <PrimaryButton label={t('profile.save')} onPress={handleSave} />
         </ScrollView>
       </SafeAreaView>
       <Modal
@@ -308,20 +310,20 @@ export function ProfileScreen({ navigation }: Props) {
           <View style={styles.modalBackdrop}>
             <TouchableWithoutFeedback>
               <View style={styles.modalCard}>
-                <Text style={styles.modalTitle}>Choose source</Text>
+                <Text style={styles.modalTitle}>{t('profile.modal.title')}</Text>
                 <Text style={styles.modalSubtitle}>
-                  Select camera or gallery to provide the document photo.
+                  {t('profile.modal.subtitle')}
                 </Text>
                 <PrimaryButton
-                  label="Open camera"
+                  label={t('profile.modal.camera')}
                   onPress={() => handleChoice('camera')}
                 />
                 <PrimaryButton
-                  label="Choose from gallery"
+                  label={t('profile.modal.gallery')}
                   variant="ghost"
                   onPress={() => handleChoice('library')}
                 />
-                <PrimaryButton label="Cancel" variant="ghost" onPress={closePicker} />
+                <PrimaryButton label={t('profile.modal.cancel')} variant="ghost" onPress={closePicker} />
               </View>
             </TouchableWithoutFeedback>
           </View>

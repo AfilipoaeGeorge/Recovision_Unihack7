@@ -20,10 +20,12 @@ import { SurgeryDetailView } from '../../components/SurgeryDetailView';
 import { currentSurgery } from '../data/surgeries';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { useThemeColors } from '../hooks/useThemeColors';
+import { useTranslation } from '../hooks/useTranslation';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'CurrentSurgery'>;
 
 export function CurrentSurgeryScreen({ navigation }: Props) {
+  const t = useTranslation();
   const [scarImages, setScarImages] = useState(currentSurgery.scarImages);
   const [pickerVisible, setPickerVisible] = useState(false);
   const [cameraVisible, setCameraVisible] = useState(false);
@@ -41,7 +43,7 @@ export function CurrentSurgeryScreen({ navigation }: Props) {
   const handleGalleryPick = useCallback(async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
-      Alert.alert('Permission needed', 'Gallery access is required.');
+      Alert.alert(t('profile.permission.needed'), t('currentSurgery.permission.gallery'));
       return;
     }
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -51,7 +53,7 @@ export function CurrentSurgeryScreen({ navigation }: Props) {
     if (!result.canceled && result.assets?.length) {
       addScarImage(result.assets[0].uri);
     }
-  }, [addScarImage]);
+  }, [addScarImage, t]);
 
   const openPicker = () => setPickerVisible(true);
   const closePicker = () => setPickerVisible(false);
@@ -83,8 +85,8 @@ export function CurrentSurgeryScreen({ navigation }: Props) {
           showsVerticalScrollIndicator={false}
         >
           <ScreenHeader
-            title="Current surgery"
-            subtitle="Track each procedure, meds, and recovery notes in one place."
+            title={t('currentSurgery.title')}
+            subtitle={t('currentSurgery.subtitle')}
             onBack={() => navigation.goBack()}
           />
           <SurgeryDetailView
@@ -107,20 +109,20 @@ export function CurrentSurgeryScreen({ navigation }: Props) {
             <View style={styles.modalBackdrop}>
               <TouchableWithoutFeedback>
                 <View style={styles.modalCard}>
-                  <Text style={styles.modalTitle}>Add scar photo</Text>
+                  <Text style={styles.modalTitle}>{t('currentSurgery.modal.title')}</Text>
                   <Text style={styles.modalSubtitle}>
-                    Choose how you want to record the latest incision update.
+                    {t('currentSurgery.modal.subtitle')}
                   </Text>
                   <PrimaryButton
-                    label="Open camera"
+                    label={t('currentSurgery.modal.camera')}
                     onPress={() => handleChoice('camera')}
                   />
                   <PrimaryButton
-                    label="Choose from gallery"
+                    label={t('currentSurgery.modal.gallery')}
                     variant="ghost"
                     onPress={() => handleChoice('library')}
                   />
-                  <PrimaryButton label="Cancel" variant="ghost" onPress={closePicker} />
+                  <PrimaryButton label={t('currentSurgery.modal.cancel')} variant="ghost" onPress={closePicker} />
                 </View>
               </TouchableWithoutFeedback>
             </View>

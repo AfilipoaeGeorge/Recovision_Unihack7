@@ -9,10 +9,12 @@ import { RootStackParamList } from '../navigation/types';
 import { getSurgeryById } from '../data/surgeries';
 import { SurgeryDetailView } from '../../components/SurgeryDetailView';
 import { useThemeColors } from '../hooks/useThemeColors';
+import { useTranslation } from '../hooks/useTranslation';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'SurgeryDetails'>;
 
 export function SurgeryDetailsScreen({ navigation, route }: Props) {
+  const t = useTranslation();
   const surgery = useMemo(() => getSurgeryById(route.params.id), [route.params.id]);
   const colors = useThemeColors();
   const styles = useMemo(() => createStyles(colors), [colors]);
@@ -20,6 +22,9 @@ export function SurgeryDetailsScreen({ navigation, route }: Props) {
     () => [colors.background, colors.surface, colors.card],
     [colors],
   );
+
+  // Use translation key directly from data structure
+  const translatedTitle = surgery ? t(surgery.titleKey as any) : null;
 
   return (
     <LinearGradient
@@ -32,11 +37,11 @@ export function SurgeryDetailsScreen({ navigation, route }: Props) {
           showsVerticalScrollIndicator={false}
         >
           <ScreenHeader
-            title={surgery?.title ?? 'Surgery details'}
+            title={translatedTitle ?? t('surgery.details.title')}
             subtitle={
               surgery
-                ? `Performed on ${surgery.date} by ${surgery.doctor}.`
-                : 'The selected surgery could not be found.'
+                ? `${t('surgery.details.performedOn')} ${surgery.date} by ${surgery.doctor}.`
+                : t('surgery.details.notFound')
             }
             onBack={() => navigation.goBack()}
           />
@@ -46,7 +51,7 @@ export function SurgeryDetailsScreen({ navigation, route }: Props) {
           ) : (
             <View style={styles.emptyState}>
               <Text style={styles.emptyText}>
-                We couldn’t locate this surgery. Please try again.
+                {t('surgery.details.notFoundMessage')}
               </Text>
             </View>
           )}

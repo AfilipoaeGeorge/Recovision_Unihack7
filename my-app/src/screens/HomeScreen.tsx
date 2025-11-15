@@ -14,50 +14,52 @@ import { spacing, typography } from '../../res';
 import { ColorPalette } from '../../res/colors';
 import { RootStackParamList } from '../navigation/types';
 import { useThemeColors } from '../hooks/useThemeColors';
+import { useTranslation } from '../hooks/useTranslation';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
 type Section = {
-  title: string;
-  description: string;
+  titleKey: string;
+  descriptionKey: string;
   accent: string;
   route: keyof RootStackParamList;
 };
 
 const sections: Section[] = [
   {
-    title: 'Profile',
-    description: 'Update your personal recovery details.',
+    titleKey: 'home.feature.profile',
+    descriptionKey: 'home.feature.profile.desc',
     accent: '#6366F1',
     route: 'Profile',
   },
   {
-    title: 'History',
-    description: 'Review completed practices and surgeries.',
+    titleKey: 'home.feature.history',
+    descriptionKey: 'home.feature.history.desc',
     accent: '#8B5CF6',
     route: 'History',
   },
   {
-    title: 'Settings',
-    description: 'Fine-tune notifications and accessibility.',
+    titleKey: 'home.feature.settings',
+    descriptionKey: 'home.feature.settings.desc',
     accent: '#EC4899',
     route: 'Settings',
   },
   {
-    title: 'Current Surgery',
-    description: 'Track the plan for your current recovery.',
+    titleKey: 'home.feature.current',
+    descriptionKey: 'home.feature.current.desc',
     accent: '#14B8A6',
     route: 'CurrentSurgery',
   },
   {
-    title: 'Exercises',
-    description: 'Stay on track with guided exercises.',
+    titleKey: 'home.feature.exercise',
+    descriptionKey: 'home.feature.exercise.desc',
     accent: '#F97316',
     route: 'Exercise',
   },
 ] as const;
 
 export function HomeScreen({ navigation }: Props) {
+  const t = useTranslation();
   const colors = useThemeColors();
   const styles = useMemo(() => createStyles(colors), [colors]);
   const gradientStops = useMemo(
@@ -77,14 +79,14 @@ export function HomeScreen({ navigation }: Props) {
       <SafeAreaView style={styles.safeArea}>
         <View style={styles.headerBar}>
           <View style={styles.headerTop}>
-            <Text style={styles.kicker}>Dashboard</Text>
+            <Text style={styles.kicker}>{t('home.header.kicker')}</Text>
             <Pressable onPress={handleLogout} hitSlop={8}>
-              <Text style={styles.logout}>Logout</Text>
+              <Text style={styles.logout}>{t('home.logout')}</Text>
             </Pressable>
           </View>
-          <Text style={styles.title}>Your recovery hub</Text>
+          <Text style={styles.title}>{t('home.header.title')}</Text>
           <Text style={styles.subtitle}>
-            Quick actions designed to keep you focused on getting better.
+            {t('home.header.subtitle')}
           </Text>
         </View>
         <ScrollView
@@ -94,9 +96,9 @@ export function HomeScreen({ navigation }: Props) {
           <View style={styles.grid}>
             {sections.map((section) => (
               <FeatureCard
-                key={section.title}
-                title={section.title}
-                description={section.description}
+                key={section.titleKey}
+                title={t(section.titleKey as any)}
+                description={t(section.descriptionKey as any)}
                 accent={section.accent}
                 onPress={() => navigation.navigate(section.route)}
               />

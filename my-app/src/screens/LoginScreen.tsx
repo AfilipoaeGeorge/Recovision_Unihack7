@@ -8,12 +8,14 @@ import { AuthLink } from '../../components/AuthLink';
 import { ColorPalette } from '../../res/colors';
 import { useThemeColors } from '../hooks/useThemeColors';
 import { RootStackParamList } from '../navigation/types';
+import { useTranslation } from '../hooks/useTranslation';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export function LoginScreen({ navigation }: Props) {
+  const t = useTranslation();
   const colors = useThemeColors();
   const styles = useMemo(() => createStyles(colors), [colors]);
   const [email, setEmail] = useState('');
@@ -25,10 +27,10 @@ export function LoginScreen({ navigation }: Props) {
   const validate = () => {
     const nextErrors: typeof errors = {};
     if (!emailRegex.test(email)) {
-      nextErrors.email = 'Please enter a valid email address.';
+      nextErrors.email = t('auth.login.emailError');
     }
     if (password.length < 6) {
-      nextErrors.password = 'Password must be at least 6 characters.';
+      nextErrors.password = t('auth.login.passwordError');
     }
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
@@ -51,19 +53,19 @@ export function LoginScreen({ navigation }: Props) {
       behavior={Platform.select({ ios: 'padding', android: undefined })}
     >
       <AuthLayout
-        title="Welcome back"
-        subtitle="Log in to continue your personalized recovery journey."
+        title={t('auth.login.title')}
+        subtitle={t('auth.login.subtitle')}
         footer={
           <AuthLink
-            label="No account yet?"
-            actionLabel="Create one"
+            label={t('auth.login.noAccount')}
+            actionLabel={t('auth.login.createOne')}
             onPress={() => navigation.navigate('Register')}
           />
         }
       >
         <TextField
-          label="Email"
-          placeholder="john.doe@email.com"
+          label={t('auth.login.email')}
+          placeholder={t('auth.login.emailPlaceholder')}
           keyboardType="email-address"
           autoCapitalize="none"
           value={email}
@@ -71,14 +73,14 @@ export function LoginScreen({ navigation }: Props) {
           error={errors.email}
         />
         <TextField
-          label="Password"
-          placeholder="Enter your password"
+          label={t('auth.login.password')}
+          placeholder={t('auth.login.passwordPlaceholder')}
           secureTextEntry
           value={password}
           onChangeText={setPassword}
           error={errors.password}
         />
-        <PrimaryButton label="Sign in" onPress={handleLogin} />
+        <PrimaryButton label={t('auth.login.button')} onPress={handleLogin} />
       </AuthLayout>
     </KeyboardAvoidingView>
   );

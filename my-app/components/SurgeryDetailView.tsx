@@ -4,6 +4,7 @@ import { spacing, typography } from '../res';
 import { ColorPalette } from '../res/colors';
 import { Surgery } from '../src/data/surgeries';
 import { useThemeColors } from '../src/hooks/useThemeColors';
+import { useTranslation } from '../src/hooks/useTranslation';
 import { PrimaryButton } from './PrimaryButton';
 
 type Props = {
@@ -21,38 +22,48 @@ export function SurgeryDetailView({
   onDeleteScar,
   showUploadButton,
 }: Props) {
+  const t = useTranslation();
   const colors = useThemeColors();
   const styles = useMemo(() => createStyles(colors), [colors]);
+  
+  // Use translation keys directly from data structure
+  const translatedTitle = t(surgery.titleKey as any);
+  const translatedDescription = t(surgery.descriptionKey as any);
+  
   return (
     <>
       <View style={styles.card}>
         <View style={styles.cardHeader}>
-          <Text style={styles.cardTitle}>{surgery.title}</Text>
+          <Text style={styles.cardTitle}>{translatedTitle}</Text>
           <Text style={styles.cardDate}>{surgery.date}</Text>
         </View>
-        <Text style={styles.cardDoctor}>Lead doctor: {surgery.doctor}</Text>
-        <Text style={styles.sectionLabel}>Post-op status</Text>
-        <Text style={styles.description}>{surgery.description}</Text>
-        <Text style={styles.sectionLabel}>Treatment plan</Text>
+        <Text style={styles.cardDoctor}>{t('surgery.leadDoctor')} {surgery.doctor}</Text>
+        <Text style={styles.sectionLabel}>{t('currentSurgery.status')}</Text>
+        <Text style={styles.description}>{translatedDescription}</Text>
+        <Text style={styles.sectionLabel}>{t('currentSurgery.treatment')}</Text>
         <View style={styles.treatmentList}>
-          {surgery.treatments.map((treatment, index) => (
-            <View key={`${surgery.id}-${index}`} style={styles.treatmentItem}>
-              <View style={styles.treatmentIndicator} />
-              <View style={styles.treatmentInfo}>
-                <Text style={styles.treatmentName}>{treatment.name}</Text>
-                <Text style={styles.treatmentMeta}>
-                  {treatment.dosage} · {treatment.schedule}
-                </Text>
+          {surgery.treatments.map((treatment, index) => {
+            // Use nameKey directly from data structure
+            const translatedTreatmentName = t(treatment.nameKey as any);
+            return (
+              <View key={`${surgery.id}-${index}`} style={styles.treatmentItem}>
+                <View style={styles.treatmentIndicator} />
+                <View style={styles.treatmentInfo}>
+                  <Text style={styles.treatmentName}>{translatedTreatmentName}</Text>
+                  <Text style={styles.treatmentMeta}>
+                    {treatment.dosage} · {treatment.schedule}
+                  </Text>
+                </View>
               </View>
-            </View>
-          ))}
+            );
+          })}
         </View>
       </View>
 
       <View style={styles.card}>
-        <Text style={styles.cardTitle}>Scar tracking</Text>
+        <Text style={styles.cardTitle}>{t('currentSurgery.scar.title')}</Text>
         <Text style={styles.cardDoctor}>
-          Keep visual evidence of how the incision heals over time.
+          {t('currentSurgery.scar.subtitle')}
         </Text>
         <View style={styles.imageGrid}>
           {scarImages.map((uri, index) => (
@@ -61,17 +72,17 @@ export function SurgeryDetailView({
                 <Text style={styles.imageOrder}>#{index + 1}</Text>
                 {onDeleteScar ? (
                   <Text style={styles.deleteText} onPress={() => onDeleteScar(uri)}>
-                    Delete
+                    {t('surgery.scar.delete')}
                   </Text>
                 ) : null}
               </View>
               <Image source={{ uri }} style={styles.imagePreview} />
-              <Text style={styles.imageCaption}>Tap to enlarge</Text>
+              <Text style={styles.imageCaption}>{t('surgery.scar.tapToEnlarge')}</Text>
             </View>
           ))}
         </View>
         {showUploadButton && onUploadPress ? (
-          <PrimaryButton label="Upload new scar photo" onPress={onUploadPress} />
+          <PrimaryButton label={t('currentSurgery.scar.upload')} onPress={onUploadPress} />
         ) : null}
       </View>
     </>

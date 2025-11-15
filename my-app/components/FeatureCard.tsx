@@ -3,6 +3,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { spacing, typography } from '../res';
 import { useThemeColors } from '../src/hooks/useThemeColors';
+import { useTranslation } from '../src/hooks/useTranslation';
 import { ColorPalette } from '../res/colors';
 
 type FeatureCardProps = {
@@ -18,6 +19,7 @@ export function FeatureCard({
   accent,
   onPress,
 }: FeatureCardProps) {
+  const t = useTranslation();
   const colors = useThemeColors();
   const styles = useMemo(() => createStyles(colors), [colors]);
   return (
@@ -32,7 +34,7 @@ export function FeatureCard({
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.description}>{description}</Text>
         </View>
-        <Text style={styles.cta}>Open</Text>
+        <Text style={styles.cta}>{t('home.feature.open')}</Text>
       </LinearGradient>
     </Pressable>
   );

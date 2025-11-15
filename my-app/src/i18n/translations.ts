@@ -69,10 +69,69 @@ export type TranslationKey =
   | 'currentSurgery.scar.title'
   | 'currentSurgery.scar.subtitle'
   | 'currentSurgery.scar.upload'
+  | 'history.title'
   | 'history.subtitle'
   | 'history.status'
   | 'settings.language.english'
-  | 'settings.language.romanian';
+  | 'settings.language.romanian'
+  | 'auth.login.emailError'
+  | 'auth.login.passwordError'
+  | 'auth.login.emailPlaceholder'
+  | 'auth.login.passwordPlaceholder'
+  | 'auth.register.firstNameError'
+  | 'auth.register.lastNameError'
+  | 'auth.register.emailError'
+  | 'auth.register.phoneError'
+  | 'auth.register.firstNamePlaceholder'
+  | 'auth.register.lastNamePlaceholder'
+  | 'auth.register.emailPlaceholder'
+  | 'auth.register.phonePlaceholder'
+  | 'auth.register.alreadyHaveAccount'
+  | 'profile.saved'
+  | 'profile.savedMessage'
+  | 'profile.modal.title'
+  | 'profile.modal.subtitle'
+  | 'profile.modal.camera'
+  | 'profile.modal.gallery'
+  | 'profile.modal.cancel'
+  | 'profile.permission.needed'
+  | 'profile.permission.camera'
+  | 'profile.permission.gallery'
+  | 'profile.error.title'
+  | 'profile.error.message'
+  | 'currentSurgery.modal.title'
+  | 'currentSurgery.modal.subtitle'
+  | 'currentSurgery.modal.camera'
+  | 'currentSurgery.modal.gallery'
+  | 'currentSurgery.modal.cancel'
+  | 'currentSurgery.permission.gallery'
+  | 'exercise.title'
+  | 'exercise.subtitle'
+  | 'home.logout'
+  | 'home.feature.open'
+  | 'surgery.details.title'
+  | 'surgery.details.performedOn'
+  | 'surgery.details.notFound'
+  | 'surgery.details.notFoundMessage'
+  | 'surgery.leadDoctor'
+  | 'surgery.scar.delete'
+  | 'surgery.scar.tapToEnlarge'
+  | 'surgery.status.completed'
+  | 'surgery.status.recoveryWeek'
+  | 'surgery.1.title'
+  | 'surgery.1.description'
+  | 'surgery.2.title'
+  | 'surgery.2.description'
+  | 'surgery.3.title'
+  | 'surgery.3.description'
+  | 'treatment.ibuprofen'
+  | 'treatment.enoxaparin'
+  | 'treatment.vitaminC'
+  | 'treatment.paracetamol'
+  | 'treatment.amoxicillin'
+  | 'treatment.iceTherapy'
+  | 'treatment.diclofenac'
+  | 'treatment.calciumSupplement';
 
 export const translations: Record<'en' | 'ro', Record<TranslationKey, string>> = {
   en: {
@@ -152,8 +211,67 @@ export const translations: Record<'en' | 'ro', Record<TranslationKey, string>> =
     'currentSurgery.scar.subtitle':
       'Keep visual evidence of how the incision heals over time.',
     'currentSurgery.scar.upload': 'Upload new scar photo',
+    'history.title': 'History',
     'history.subtitle': 'Browse every surgery from most recent to earliest.',
     'history.status': 'Status',
+    'auth.login.emailError': 'Please enter a valid email address.',
+    'auth.login.passwordError': 'Password must be at least 6 characters.',
+    'auth.login.emailPlaceholder': 'john.doe@email.com',
+    'auth.login.passwordPlaceholder': 'Enter your password',
+    'auth.register.firstNameError': 'First name is required.',
+    'auth.register.lastNameError': 'Last name is required.',
+    'auth.register.emailError': 'Add a valid email.',
+    'auth.register.phoneError': 'Add a reachable phone number.',
+    'auth.register.firstNamePlaceholder': 'John',
+    'auth.register.lastNamePlaceholder': 'Doe',
+    'auth.register.emailPlaceholder': 'john.doe@email.com',
+    'auth.register.phonePlaceholder': '+40 712 345 678',
+    'auth.register.alreadyHaveAccount': 'Already have an account?',
+    'profile.saved': 'Saved',
+    'profile.savedMessage': 'Your profile has been updated.',
+    'profile.modal.title': 'Choose source',
+    'profile.modal.subtitle': 'Select camera or gallery to provide the document photo.',
+    'profile.modal.camera': 'Open camera',
+    'profile.modal.gallery': 'Choose from gallery',
+    'profile.modal.cancel': 'Cancel',
+    'profile.permission.needed': 'Permission needed',
+    'profile.permission.camera': 'Camera access is required.',
+    'profile.permission.gallery': 'Gallery access is required.',
+    'profile.error.title': 'Something went wrong',
+    'profile.error.message': 'Please try again in a moment.',
+    'currentSurgery.modal.title': 'Add scar photo',
+    'currentSurgery.modal.subtitle': 'Choose how you want to record the latest incision update.',
+    'currentSurgery.modal.camera': 'Open camera',
+    'currentSurgery.modal.gallery': 'Choose from gallery',
+    'currentSurgery.modal.cancel': 'Cancel',
+    'currentSurgery.permission.gallery': 'Gallery access is required.',
+    'exercise.title': 'Exercises',
+    'exercise.subtitle': 'Guided routines, streaks, and progress charts are coming soon.',
+    'home.logout': 'Logout',
+    'home.feature.open': 'Open',
+    'surgery.details.title': 'Surgery details',
+    'surgery.details.performedOn': 'Performed on',
+    'surgery.details.notFound': 'The selected surgery could not be found.',
+    'surgery.details.notFoundMessage': 'We couldn\'t locate this surgery. Please try again.',
+    'surgery.leadDoctor': 'Lead doctor:',
+    'surgery.scar.delete': 'Delete',
+    'surgery.scar.tapToEnlarge': 'Tap to enlarge',
+    'surgery.status.completed': 'Completed',
+    'surgery.status.recoveryWeek': 'Recovery - week',
+    'surgery.1.title': 'Anterior Cruciate Ligament Reconstruction',
+    'surgery.1.description': 'Patient is stable post-op. Knee is immobilized for 24h, slight swelling observed. Pain managed with mild analgesics, patient responsive and oriented.',
+    'surgery.2.title': 'Meniscus Repair',
+    'surgery.2.description': 'Sutures intact, no bleeding. Patient reports mild stiffness and is encouraged to start passive flexion exercises. Hydration and rest recommended.',
+    'surgery.3.title': 'Femur Fracture Fixation',
+    'surgery.3.description': 'Patient discharged with crutches. Swelling moderate, no signs of infection. Weekly physiotherapy recommended for mobility restoration.',
+    'treatment.ibuprofen': 'Ibuprofen',
+    'treatment.enoxaparin': 'Enoxaparin',
+    'treatment.vitaminC': 'Vitamin C',
+    'treatment.paracetamol': 'Paracetamol',
+    'treatment.amoxicillin': 'Amoxicillin',
+    'treatment.iceTherapy': 'Ice Therapy',
+    'treatment.diclofenac': 'Diclofenac',
+    'treatment.calciumSupplement': 'Calcium supplement',
   },
   ro: {
     'app.brand': 'Recovision',
@@ -236,8 +354,67 @@ export const translations: Record<'en' | 'ro', Record<TranslationKey, string>> =
     'currentSurgery.scar.subtitle':
       'Păstrează dovezi vizuale ale vindecării inciziei.',
     'currentSurgery.scar.upload': 'Încarcă poză nouă cu cicatrice',
+    'history.title': 'Istoric',
     'history.subtitle': 'Vezi toate operațiile de la cea mai recentă la cea mai veche.',
     'history.status': 'Status',
+    'auth.login.emailError': 'Te rugăm să introduci o adresă de email validă.',
+    'auth.login.passwordError': 'Parola trebuie să aibă cel puțin 6 caractere.',
+    'auth.login.emailPlaceholder': 'john.doe@email.com',
+    'auth.login.passwordPlaceholder': 'Introdu parola ta',
+    'auth.register.firstNameError': 'Prenumele este obligatoriu.',
+    'auth.register.lastNameError': 'Numele este obligatoriu.',
+    'auth.register.emailError': 'Adaugă un email valid.',
+    'auth.register.phoneError': 'Adaugă un număr de telefon valid.',
+    'auth.register.firstNamePlaceholder': 'Ion',
+    'auth.register.lastNamePlaceholder': 'Popescu',
+    'auth.register.emailPlaceholder': 'ion.popescu@email.com',
+    'auth.register.phonePlaceholder': '+40 712 345 678',
+    'auth.register.alreadyHaveAccount': 'Ai deja cont?',
+    'profile.saved': 'Salvat',
+    'profile.savedMessage': 'Profilul tău a fost actualizat.',
+    'profile.modal.title': 'Alege sursa',
+    'profile.modal.subtitle': 'Selectează camera sau galeria pentru a furniza fotografia documentului.',
+    'profile.modal.camera': 'Deschide camera',
+    'profile.modal.gallery': 'Alege din galerie',
+    'profile.modal.cancel': 'Anulează',
+    'profile.permission.needed': 'Permisiune necesară',
+    'profile.permission.camera': 'Accesul la cameră este necesar.',
+    'profile.permission.gallery': 'Accesul la galerie este necesar.',
+    'profile.error.title': 'Ceva nu a mers bine',
+    'profile.error.message': 'Te rugăm să încerci din nou într-un moment.',
+    'currentSurgery.modal.title': 'Adaugă poză cu cicatrice',
+    'currentSurgery.modal.subtitle': 'Alege cum vrei să înregistrezi ultima actualizare a inciziei.',
+    'currentSurgery.modal.camera': 'Deschide camera',
+    'currentSurgery.modal.gallery': 'Alege din galerie',
+    'currentSurgery.modal.cancel': 'Anulează',
+    'currentSurgery.permission.gallery': 'Accesul la galerie este necesar.',
+    'exercise.title': 'Exerciții',
+    'exercise.subtitle': 'Rutine ghidate, secvențe și grafice de progres vor fi disponibile în curând.',
+    'home.logout': 'Deconectare',
+    'home.feature.open': 'Deschide',
+    'surgery.details.title': 'Detalii operație',
+    'surgery.details.performedOn': 'Efectuată pe',
+    'surgery.details.notFound': 'Operația selectată nu a putut fi găsită.',
+    'surgery.details.notFoundMessage': 'Nu am putut localiza această operație. Te rugăm să încerci din nou.',
+    'surgery.leadDoctor': 'Medic principal:',
+    'surgery.scar.delete': 'Șterge',
+    'surgery.scar.tapToEnlarge': 'Atinge pentru a mări',
+    'surgery.status.completed': 'Finalizată',
+    'surgery.status.recoveryWeek': 'Recuperare - săptămâna',
+    'surgery.1.title': 'Reconstrucție Ligament Cruciat Anterior',
+    'surgery.1.description': 'Pacientul este stabil post-operator. Genunchiul este imobilizat timp de 24h, se observă umflătură ușoară. Durerea este gestionată cu analgezice ușoare, pacientul este responsiv și orientat.',
+    'surgery.2.title': 'Reparare Menisc',
+    'surgery.2.description': 'Suturi intacte, fără sângerare. Pacientul raportează rigiditate ușoară și este încurajat să înceapă exerciții pasive de flexie. Se recomandă hidratare și odihnă.',
+    'surgery.3.title': 'Fixare Fractură Femur',
+    'surgery.3.description': 'Pacient externat cu cârje. Umflătură moderată, fără semne de infecție. Se recomandă fizioterapie săptămânală pentru restabilirea mobilității.',
+    'treatment.ibuprofen': 'Ibuprofen',
+    'treatment.enoxaparin': 'Enoxaparin',
+    'treatment.vitaminC': 'Vitamina C',
+    'treatment.paracetamol': 'Paracetamol',
+    'treatment.amoxicillin': 'Amoxicilină',
+    'treatment.iceTherapy': 'Terapie cu gheață',
+    'treatment.diclofenac': 'Diclofenac',
+    'treatment.calciumSupplement': 'Supliment de calciu',
   },
 };
 
