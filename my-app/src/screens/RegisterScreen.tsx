@@ -9,6 +9,7 @@ import { ColorPalette } from '../../res/colors';
 import { useThemeColors } from '../hooks/useThemeColors';
 import { RootStackParamList } from '../navigation/types';
 import { useTranslation } from '../hooks/useTranslation';
+import { API_URL } from '../config/api';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Register'>;
 
@@ -24,6 +25,7 @@ export function RegisterScreen({ navigation }: Props) {
     lastName: '',
     email: '',
     phone: '',
+    password: '',
   });
   const [errors, setErrors] = useState<Partial<typeof form>>({});
 
@@ -45,16 +47,48 @@ export function RegisterScreen({ navigation }: Props) {
     if (!phoneRegex.test(form.phone)) {
       nextErrors.phone = t('auth.register.phoneError');
     }
+    if (!form.password || form.password.length < 6) {
+      nextErrors.password = (t('auth.register.passwordError' as any) as string) || 'Password must be at least 6 characters';
+    }
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   };
 
-  const handleRegister = () => {
-    if (validate()) {
-      console.log('Register payload', form);
-      navigation.navigate('Login');
+ const handleRegister = async () => {
+  if (!validate()) return;
+
+  try {
+    const response = await fetch(`${API_URL}/auth/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        Nume: form.firstName,
+        Prenume: form.lastName,
+        Email: form.email,
+        Password: form.password,
+        Role: "Pacient"
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || data.success === false) {
+      alert(data.message || "Something went wrong");
+      return;
     }
-  };
+
+    alert("Registered successfully!");
+    navigation.navigate('Login');
+
+  } catch (err) {
+    console.error(err);
+    alert("Cannot connect to server");
+  }
+};
+
+
 
   return (
     <KeyboardAvoidingView
@@ -102,6 +136,14 @@ export function RegisterScreen({ navigation }: Props) {
           value={form.phone}
           onChangeText={(value) => updateField('phone', value)}
           error={errors.phone}
+        />
+        <TextField
+            label={'Password'}
+          secureTextEntry
+          autoCapitalize="none"
+          value={form.password}
+          onChangeText={(value) => updateField('password', value)}
+          error={errors.password}
         />
         <PrimaryButton label={t('auth.register.button')} onPress={handleRegister} />
       </AuthLayout>
