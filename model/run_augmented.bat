@@ -3,7 +3,7 @@ cd /d "%~dp0"
 echo Rulez scriptul de augmentare...
 echo.
 
-REM Incearca sa gaseasca Python
+REM 
 where py >nul 2>&1
 if %ERRORLEVEL% == 0 (
     echo Am gasit Python launcher (py)

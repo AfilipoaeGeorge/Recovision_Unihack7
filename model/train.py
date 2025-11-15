@@ -1,161 +1,117 @@
-import tensorflow as tf
-import matplotlib.pyplot as plt
 import os
-import numpy as np
+import torch
+import torch.nn as nn
+from torch.utils.data import DataLoader
+from torchvision import datasets, transforms, models
+from torch.optim import Adam
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from utils import EarlyStopping
+from models import get_efficientnet_b0, get_vit_b16
 
-DATA_DIR = "dataset_augmented"
-IMAGE_SIZE = (224, 224)
+DATA_ROOT = "dataset_augmented"
 BATCH_SIZE = 16
+LR = 1e-4
+EPOCHS = 20
+IMG_SIZE = 224
 NUM_CLASSES = 5
-EPOCHS = 100
+MODEL_TYPE = "efficientnet" # or "vit"
 
-print(f"[INFO] Incarc datele din: {DATA_DIR}")
 
-train_dataset = tf.keras.utils.image_dataset_from_directory(
-    DATA_DIR,
-    validation_split=0.3,
-    subset="training",
-    seed=123,
-    image_size=IMAGE_SIZE,
-    batch_size=BATCH_SIZE,
-    label_mode='int' 
-)
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print("Using device:", device)
 
-val_test_dataset = tf.keras.utils.image_dataset_from_directory(
-    DATA_DIR,
-    validation_split=0.3,
-    subset="validation",
-    seed=123,
-    image_size=IMAGE_SIZE,
-    batch_size=BATCH_SIZE,
-    label_mode='int'
-)
 
-val_test_batches = tf.data.experimental.cardinality(val_test_dataset)
-val_batches = val_test_batches // 2
-validation_dataset = val_test_dataset.take(val_batches)
-test_dataset = val_test_dataset.skip(val_batches)
-
-class_names = train_dataset.class_names
-print(f"[INFO] Clasele gasite: {class_names}")
-
-print(f"[INFO] Impartire date finalizata:")
-print(f"  {tf.data.experimental.cardinality(train_dataset)} batch-uri de antrenare (70%)")
-print(f"  {tf.data.experimental.cardinality(validation_dataset)} batch-uri de validare (15%)")
-print(f"  {tf.data.experimental.cardinality(test_dataset)} batch-uri de test (15%)")
-
-AUTOTUNE = tf.data.AUTOTUNE
-train_dataset = train_dataset.cache().prefetch(buffer_size=AUTOTUNE)
-validation_dataset = validation_dataset.cache().prefetch(buffer_size=AUTOTUNE)
-test_dataset = test_dataset.cache().prefetch(buffer_size=AUTOTUNE)
-
-data_augmentation = tf.keras.Sequential([
-    tf.keras.layers.RandomFlip('horizontal'),
-    tf.keras.layers.RandomFlip('vertical'),
-    tf.keras.layers.RandomRotation(0.2),
-    tf.keras.layers.RandomZoom(0.2),
-    tf.keras.layers.RandomTranslation(0.1, 0.1),
-    tf.keras.layers.RandomContrast(0.2),
-    tf.keras.layers.RandomBrightness(0.2),
+train_transforms = transforms.Compose([
+    transforms.Resize((IMG_SIZE, IMG_SIZE)),
+    transforms.RandomHorizontalFlip(),
+    transforms.RandomRotation(10),
+    transforms.ColorJitter(brightness=0.2, contrast=0.2),
+    transforms.ToTensor(),
 ])
 
-preprocess_input = tf.keras.applications.mobilenet_v2.preprocess_input
 
-base_model = tf.keras.applications.MobileNetV2(
-    input_shape=IMAGE_SIZE + (3,),
-    include_top=False,
-    weights='imagenet'
-)
+val_transforms = transforms.Compose([
+    transforms.Resize((IMG_SIZE, IMG_SIZE)),
+    transforms.ToTensor(),
+])
 
-base_model.trainable = False
 
-inputs = tf.keras.Input(shape=IMAGE_SIZE + (3,))
-x = data_augmentation(inputs)
-x = preprocess_input(x)
-x = base_model(x, training=False)
-x = tf.keras.layers.GlobalAveragePooling2D()(x)
-x = tf.keras.layers.BatchNormalization()(x)
-x = tf.keras.layers.Dense(256, activation='relu')(x)
-x = tf.keras.layers.Dropout(0.4)(x)
-x = tf.keras.layers.Dense(128, activation='relu')(x)
-x = tf.keras.layers.Dropout(0.3)(x)
-outputs = tf.keras.layers.Dense(NUM_CLASSES, activation='softmax')(x)
+dataset = datasets.ImageFolder(DATA_ROOT, transform=train_transforms)
+train_idx, val_idx = train_test_split(list(range(len(dataset))), test_size=0.2, random_state=42)
 
-model = tf.keras.Model(inputs, outputs)
 
-model.compile(
-    optimizer=tf.keras.optimizers.Adam(learning_rate=0.0005),
-    loss='sparse_categorical_crossentropy',
-    metrics=['accuracy']
-)
+train_ds = torch.utils.data.Subset(dataset, train_idx)
+val_ds = torch.utils.data.Subset(datasets.ImageFolder(DATA_ROOT, transform=val_transforms), val_idx)
 
-model.summary()
 
-early_stop = tf.keras.callbacks.EarlyStopping(
-    monitor='val_loss',
-    patience=10,
-    restore_best_weights=True
-)
+train_loader = DataLoader(train_ds, batch_size=BATCH_SIZE, shuffle=True)
+val_loader = DataLoader(val_ds, batch_size=BATCH_SIZE, shuffle=False)
 
-reduce_lr = tf.keras.callbacks.ReduceLROnPlateau(
-    monitor='val_loss',
-    factor=0.5,
-    patience=3,
-    min_lr=0.00001,
-    verbose=1
-)
 
-print("\n[INFO] Incep antrenarea...")
+class_names = dataset.classes
+print("Classes:", class_names)
 
-history = model.fit(
-    train_dataset,
-    epochs=EPOCHS,
-    validation_data=validation_dataset,
-    callbacks=[early_stop, reduce_lr]
-)
 
-print("[INFO] Antrenare finalizata!")
+if MODEL_TYPE == "efficientnet":
+    model = get_efficientnet_b0(NUM_CLASSES)
+elif MODEL_TYPE == "vit":
+    model = get_vit_b16(NUM_CLASSES)
 
-model.save("cicatrici_model_70_30.keras")
-print("[INFO] Modelul a fost salvat ca 'cicatrici_model_70_30.keras'")
 
-# Salvez și lista cu clasele pentru referință
-with open("class_names.txt", "w") as f:
-    for i, cls in enumerate(class_names):
-        f.write(f"{i}: {cls}\n")
-print(f"[INFO] Clasele salvate in 'class_names.txt': {class_names}")
+model = model.to(device)
+criterion = nn.CrossEntropyLoss()
+optimizer = Adam(model.parameters(), lr=LR)
+early_stopping = EarlyStopping(patience=5, min_delta=0.001)
 
-print("\n[INFO] Evaluarea finala a modelului pe setul de TEST...")
-test_loss, test_accuracy = model.evaluate(test_dataset)
 
-print(f"\n[REZULTATE TEST]")
-print(f"  Pierdere (Loss): {test_loss:.4f}")
-print(f"  Acuratete (Accuracy): {test_accuracy * 100:.2f}%")
+train_losses, val_losses = [], []
 
-acc = history.history['accuracy']
-val_acc = history.history['val_accuracy']
-loss = history.history['loss']
-val_loss = history.history['val_loss']
 
-epochs_range = range(len(acc))
+for epoch in range(EPOCHS):
+    model.train()
+    total_loss = 0
+    for images, labels in train_loader:
+        images, labels = images.to(device), labels.to(device)
+        optimizer.zero_grad()
+        outputs = model(images)
+        loss = criterion(outputs, labels)
+        loss.backward()
+        optimizer.step()
+        total_loss += loss.item()
 
-plt.figure(figsize=(12, 6))
-plt.subplot(1, 2, 1)
-plt.plot(epochs_range, acc, label='Acuratete Antrenare (70%)')
-plt.plot(epochs_range, val_acc, label='Acuratete Validare (15%)')
-plt.legend(loc='lower right')
-plt.title('Acuratetea Antrenarii si Validarii')
-plt.xlabel('Epoci')
-plt.ylabel('Acuratete')
+    train_loss = total_loss / len(train_loader)
+    train_losses.append(train_loss)
 
-plt.subplot(1, 2, 2)
-plt.plot(epochs_range, loss, label='Pierdere Antrenare (70%)')
-plt.plot(epochs_range, val_loss, label='Pierdere Validare (15%)')
-plt.legend(loc='upper right')
-plt.title('Pierderea Antrenarii si Validarii')
-plt.xlabel('Epoci')
-plt.ylabel('Pierdere')
+    model.eval()
+    total_loss = 0
 
-plt.suptitle(f'Rezultate Test: Acuratete {test_accuracy*100:.2f}% / Pierdere {test_loss:.4f}')
-plt.savefig("rezultate_antrenare_70_30.png")
-print("[INFO] Graficele au fost salvate ca 'rezultate_antrenare_70_30.png'")
+
+    with torch.no_grad():
+        for images, labels in val_loader:
+            images, labels = images.to(device), labels.to(device)
+            outputs = model(images)
+            loss = criterion(outputs, labels)
+            total_loss += loss.item()
+
+    val_loss = total_loss / len(val_loader)
+    val_losses.append(val_loss)
+
+    print(f"Epoch {epoch+1}/{EPOCHS} | Train Loss: {train_loss:.4f} | Val Loss: {val_loss:.4f}")
+
+
+    if early_stopping(val_loss):
+        print("Early stopping triggered.")
+        break
+
+plt.plot(train_losses, label="Train Loss")
+plt.plot(val_losses, label="Val Loss")
+plt.legend()
+plt.xlabel("Epochs")
+plt.ylabel("Loss")
+plt.savefig("training_curve.png")
+
+
+save_name = f"model_{MODEL_TYPE}.pth"
+torch.save(model.state_dict(), save_name)
+print(f"Saved {save_name}")

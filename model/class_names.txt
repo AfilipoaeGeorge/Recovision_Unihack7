@@ -1,5 +1,0 @@
-0: dehiscence
-1: fully healed
-2: infected
-3: inflammation
-4: normal_healing

@@ -49,7 +49,6 @@ train_dataset = train_dataset.cache().prefetch(buffer_size=AUTOTUNE)
 validation_dataset = validation_dataset.cache().prefetch(buffer_size=AUTOTUNE)
 test_dataset = test_dataset.cache().prefetch(buffer_size=AUTOTUNE)
 
-# Data augmentation mai agresiva
 data_augmentation = tf.keras.Sequential([
     tf.keras.layers.RandomFlip('horizontal'),
     tf.keras.layers.RandomFlip('vertical'),
@@ -63,14 +62,12 @@ data_augmentation = tf.keras.Sequential([
 
 preprocess_input = tf.keras.applications.mobilenet_v2.preprocess_input
 
-# Incerc cu mai mult transfer learning - mai multi layeri trainable
 base_model = tf.keras.applications.MobileNetV2(
     input_shape=IMAGE_SIZE + (3,),
     include_top=False,
     weights='imagenet'
 )
 
-# Fac trainable ultimele 50 de layeri din base_model
 base_model.trainable = True
 for layer in base_model.layers[:-50]:
     layer.trainable = False
@@ -78,7 +75,7 @@ for layer in base_model.layers[:-50]:
 inputs = tf.keras.Input(shape=IMAGE_SIZE + (3,))
 x = data_augmentation(inputs)
 x = preprocess_input(x)
-x = base_model(x, training=True)  # training=True pentru batch norm si dropout
+x = base_model(x, training=True) 
 x = tf.keras.layers.GlobalAveragePooling2D()(x)
 x = tf.keras.layers.BatchNormalization()(x)
 x = tf.keras.layers.Dense(512, activation='relu', kernel_regularizer=tf.keras.regularizers.l2(0.0001))(x)
@@ -129,7 +126,6 @@ print("[INFO] Antrenare finalizata!")
 model.save("cicatrici_model_70_30.keras")
 print("[INFO] Modelul a fost salvat ca 'cicatrici_model_70_30.keras'")
 
-# Salvez și lista cu clasele pentru referință
 with open("class_names.txt", "w") as f:
     for i, cls in enumerate(class_names):
         f.write(f"{i}: {cls}\n")

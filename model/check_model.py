@@ -6,12 +6,10 @@ MODEL_PATH = "cicatrici_model_70_30.keras"
 DATA_DIR = "dataset_augmented"
 IMAGE_SIZE = (224, 224)
 
-# Verific ordinea claselor din directoare
 print("[INFO] Verific ordinea claselor din directoarele de date...")
 class_names_from_dir = sorted([d for d in os.listdir(DATA_DIR) if os.path.isdir(os.path.join(DATA_DIR, d))])
 print(f"Ordinea din directoare: {class_names_from_dir}")
 
-# Verific ordinea claselor din dataset
 print("\n[INFO] Verific ordinea din TensorFlow dataset...")
 dataset = tf.keras.utils.image_dataset_from_directory(
     DATA_DIR,
@@ -21,15 +19,12 @@ dataset = tf.keras.utils.image_dataset_from_directory(
 )
 print(f"Ordinea din dataset: {dataset.class_names}")
 
-# Verific modelul
 print("\n[INFO] Incarc modelul...")
 model = tf.keras.models.load_model(MODEL_PATH)
 
-# Verific config-ul modelului
 print(f"Input shape: {model.input_shape}")
 print(f"Output shape: {model.output_shape}")
 
-# Preiau o imagine de test si verific predictia
 test_image_path = "scars_images/dehiscence/Dehiscence2.png"
 if os.path.exists(test_image_path):
     print(f"\n[INFO] Testez cu imaginea: {test_image_path}")
