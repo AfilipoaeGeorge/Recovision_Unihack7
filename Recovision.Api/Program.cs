@@ -157,7 +157,7 @@ app.MapControllers();
 // ✅ Redirect root requests to the frontend (Azure web app)
 app.MapGet("/", context =>
 {
-    //context.Response.Redirect("https://erasmus-frontend-gagkcdcvbuayfjhu.swedencentral-01.azurewebsites.net");
+    
     return context.Response.WriteAsync("API is running.Go to /swagger for tests");
 });
 

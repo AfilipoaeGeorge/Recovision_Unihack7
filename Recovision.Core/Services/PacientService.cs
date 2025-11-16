@@ -33,29 +33,30 @@ namespace Recovision.Core.Services
         /// </summary>
         public async Task<Pacient?> UpdatePacientProfileAsync(Guid pacientId, UpdatePacientRequest updated)
         {
-            // găsim pacientul asociat userului
-            var pacient = await _context.Pacienti
-                .FirstOrDefaultAsync(u => u.Id == pacientId);
-
+            var pacient = await _context.Pacienti.FirstOrDefaultAsync(u => u.Id == pacientId);
             if (pacient == null)
                 return null;
-            
 
-            // actualizăm câmpurile permise
-            //pacient.Nume = updated.Nume ?? pacient.Nume;
-            //pacient.Prenume = updated.Prenume ?? pacient.Prenume;
-            pacient.CNP = updated.CNP ?? pacient.CNP;
-            pacient.DataNasterii = updated.DataNasterii;
-            pacient.LoculNasterii = updated.LoculNasterii ?? pacient.LoculNasterii;
+            pacient.CNP = updated.Cnp ?? pacient.CNP;
+            pacient.Nume = updated.Nume ?? pacient.Nume;
+            pacient.Prenume = updated.Prenume ?? pacient.Prenume;
+            pacient.LoculNasterii = updated.Loc_Nastere ?? pacient.LoculNasterii;
             pacient.Cetatenie = updated.Cetatenie ?? pacient.Cetatenie;
-            pacient.SerieCi = updated.SerieCi ?? pacient.SerieCi;
-            pacient.NumarCi = updated.NumarCi ?? pacient.NumarCi;
+            pacient.SerieCi = updated.Serie_Ci ?? pacient.SerieCi;
+            pacient.NumarCi = updated.Numar_Ci ?? pacient.NumarCi;
             pacient.Adresa = updated.Adresa ?? pacient.Adresa;
+            pacient.Sex = updated.Sex ?? pacient.Sex;
             pacient.Telefon = updated.Telefon ?? pacient.Telefon;
+            pacient.DataEmitere = updated.Data_Emitere ?? pacient.DataEmitere;
+            pacient.DataExpirare = updated.Data_Expirare ?? pacient.DataExpirare;
+            pacient.EmisDe = updated.Emis_De ?? pacient.EmisDe;
+
+            if (DateOnly.TryParse(updated.Data_Nasterii, out var dn))
+                pacient.DataNasterii = dn;
 
             await _context.SaveChangesAsync();
-
             return pacient;
         }
+
     }
 }

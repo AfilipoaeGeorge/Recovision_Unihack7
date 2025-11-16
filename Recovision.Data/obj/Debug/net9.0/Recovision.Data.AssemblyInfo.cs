@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Recovision.Data")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b22f23c39dd25171e13b7b6916fa0e0952d5a3d3")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+223efa2582a72863f650c9f20b63bf64bbfaad39")]
 [assembly: System.Reflection.AssemblyProductAttribute("Recovision.Data")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Recovision.Data")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

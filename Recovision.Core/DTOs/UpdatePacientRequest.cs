@@ -6,21 +6,21 @@ using System.Threading.Tasks;
 namespace Recovision.Core.DTOs
 {
     public class UpdatePacientRequest
-    {
-        //public string Nume { get; set; }
-        //public string Prenume { get; set; }
-        public string? CNP { get; set; }
-        public DateOnly DataNasterii { get; set; }
-        public string? LoculNasterii { get; set; }
-        public string? Cetatenie { get; set; }
-        public string? SerieCi { get; set; }
-        public string? NumarCi { get; set; }
-        public string? Adresa { get; set; }
-        public string? AnUniversitar { get; set; }  
-        public string? Facultate { get; set; }
-        public string? Specializare { get; set; }
-        public int AnDeStudiu { get; set; }
-        public string? Telefon { get; set; }
-        public double MedieGenerala { get; set; }
-    }
+{
+    public string? Cnp { get; set; }
+    public string? Nume { get; set; }
+    public string? Prenume { get; set; }
+    public string? Data_Nasterii { get; set; }
+    public string? Loc_Nastere { get; set; }
+    public string? Serie_Ci { get; set; }
+    public string? Numar_Ci { get; set; }
+    public string? Sex { get; set; }
+    public string? Cetatenie { get; set; }
+    public string? Adresa { get; set; }
+    public string? Telefon { get; set; } 
+    public string? Data_Emitere { get; set; }
+    public string? Data_Expirare { get; set; }
+    public string? Emis_De { get; set; }
+}
+
 }
