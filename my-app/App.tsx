@@ -1,8 +1,7 @@
-import { NavigationContainer, DefaultTheme, InitialState, NavigationState } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { LoginScreen } from './src/screens/LoginScreen';
 import { RegisterScreen } from './src/screens/RegisterScreen';
 import { HomeScreen } from './src/screens/HomeScreen';
@@ -23,8 +22,6 @@ const NavigationWrapper = () => {
   const { theme } = useSettings();
   const colors = useThemeColors();
   const { loggedIn, loading } = useAuth();
-  const [initialState, setInitialState] = useState<InitialState | undefined>();
-  const [navReady, setNavReady] = useState(false);
   const navigationTheme = {
     ...DefaultTheme,
     colors: {
@@ -37,64 +34,19 @@ const NavigationWrapper = () => {
     },
   };
   const navigatorKey = useMemo(() => (loggedIn ? 'auth' : 'guest'), [loggedIn]);
-  const persistenceKey = useMemo(
-    () => (loggedIn ? 'recovision.nav.auth' : 'recovision.nav.guest'),
-    [loggedIn],
-  );
 
-  useEffect(() => {
-    if (loading) {
-      return;
-    }
-    let mounted = true;
-    const restoreState = async () => {
-      try {
-        const storedState = await AsyncStorage.getItem(persistenceKey);
-        if (storedState && mounted) {
-          setInitialState(JSON.parse(storedState));
-        } else if (mounted) {
-          setInitialState(undefined);
-        }
-      } catch {
-        if (mounted) {
-          setInitialState(undefined);
-        }
-      } finally {
-        if (mounted) {
-          setNavReady(true);
-        }
-      }
-    };
-    setNavReady(false);
-    setInitialState(undefined);
-    restoreState();
-    return () => {
-      mounted = false;
-    };
-  }, [loading, persistenceKey]);
-
-  const handleStateChange = useCallback(
-    (state?: NavigationState) => {
-      if (state) {
-        AsyncStorage.setItem(persistenceKey, JSON.stringify(state)).catch(() => {});
-      }
-    },
-    [persistenceKey],
-  );
-
-  if (loading || !navReady) {
+  if (loading) {
     return null;
   }
 
   return (
     <NavigationContainer
       theme={navigationTheme}
-      initialState={initialState}
-      onStateChange={handleStateChange}
     >
       <StatusBar style={theme === 'dark' ? 'light' : 'dark'} />
       <Stack.Navigator
         key={navigatorKey}
+        initialRouteName={loggedIn ? 'Home' : 'Login'}
         screenOptions={{
           headerShown: false,
           animation: 'fade_from_bottom',

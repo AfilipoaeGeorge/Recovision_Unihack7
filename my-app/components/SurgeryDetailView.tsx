@@ -13,6 +13,7 @@ type Props = {
   onUploadPress?: () => void;
   onDeleteScar?: (uri: string) => void;
   showUploadButton?: boolean;
+  captionsByUri?: Record<string, string>;
 };
 
 export function SurgeryDetailView({
@@ -21,6 +22,7 @@ export function SurgeryDetailView({
   onUploadPress,
   onDeleteScar,
   showUploadButton,
+  captionsByUri,
 }: Props) {
   const t = useTranslation();
   const colors = useThemeColors();
@@ -76,8 +78,15 @@ export function SurgeryDetailView({
                   </Text>
                 ) : null}
               </View>
-              <Image source={{ uri }} style={styles.imagePreview} />
-              <Text style={styles.imageCaption}>{t('surgery.scar.tapToEnlarge')}</Text>
+              <View style={styles.imageRow}>
+                <Image source={{ uri }} style={styles.imagePreview} />
+                <View style={styles.predictionBox}>
+                  <Text style={styles.predictionTitle}>ML</Text>
+                  <Text style={styles.predictionValue}>
+                    {captionsByUri?.[uri] ?? t('surgery.scar.tapToEnlarge')}
+                  </Text>
+                </View>
+              </View>
             </View>
           ))}
         </View>
@@ -186,13 +195,34 @@ const createStyles = (colors: ColorPalette) =>
       fontWeight: typography.weight.semibold as any,
     },
     imagePreview: {
-      width: '100%',
-      height: 140,
+      width: 120,
+      height: 120,
       borderRadius: 12,
     },
-    imageCaption: {
-      color: colors.accent,
+    imageRow: {
+      flexDirection: 'row',
+      gap: spacing.sm,
+      alignItems: 'center',
+    },
+    predictionBox: {
+      flex: 1,
+      backgroundColor: colors.surface,
+      borderRadius: 12,
+      padding: spacing.sm,
+      borderWidth: 1,
+      borderColor: colors.primaryMuted,
+      minHeight: 120,
+      justifyContent: 'center',
+    },
+    predictionTitle: {
+      color: colors.textSecondary,
       fontSize: typography.caption,
+      marginBottom: 4,
+    },
+    predictionValue: {
+      color: colors.accent,
+      fontSize: typography.subtitle,
+      fontWeight: typography.weight.semibold as any,
     },
   });
 
