@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import {
   Alert,
@@ -20,16 +20,17 @@ import { RootStackParamList } from '../navigation/types';
 import { CameraCaptureModal } from '../../components/CameraCaptureModal';
 import { MediapipeOverlayModal } from '../../components/MediapipeOverlayModal';
 import { SurgeryDetailView } from '../../components/SurgeryDetailView';
-import { currentSurgery } from '../data/surgeries';
 import { PrimaryButton } from '../../components/PrimaryButton';
 import { useThemeColors } from '../hooks/useThemeColors';
 import { useTranslation } from '../hooks/useTranslation';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { currentSurgery } from '../data/surgeries';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'CurrentSurgery'>;
 
 export function CurrentSurgeryScreen({ navigation }: Props) {
   const t = useTranslation();
-  const [scarImages, setScarImages] = useState(currentSurgery.scarImages);
+  const [scarImages, setScarImages] = useState<string[]>([]);
   const [predictionsByUri, setPredictionsByUri] = useState<Record<string, string>>({});
   const [pickerVisible, setPickerVisible] = useState(false);
   const [cameraVisible, setCameraVisible] = useState(false);
@@ -40,6 +41,87 @@ export function CurrentSurgeryScreen({ navigation }: Props) {
     () => [colors.background, colors.surface, colors.card],
     [colors],
   );
+
+  const SCAR_IMAGES_STORAGE_KEY = '@recovision/scarImages';
+  const PREDICTIONS_STORAGE_KEY = '@recovision/predictionsByUri';
+  const SCAR_ITEMS_STORAGE_KEY = '@recovision/scarItems'; // [{ uri, label }]
+
+  useEffect(() => {
+    let isMounted = true;
+    (async () => {
+      try {
+        // Preferred: load combined items if present
+        const itemsRaw = await AsyncStorage.getItem(SCAR_ITEMS_STORAGE_KEY);
+        if (itemsRaw) {
+          const parsedItems = JSON.parse(itemsRaw);
+          if (Array.isArray(parsedItems)) {
+            const nextImages: string[] = [];
+            const nextPreds: Record<string, string> = {};
+            parsedItems.forEach((it) => {
+              if (it && typeof it.uri === 'string') {
+                nextImages.push(it.uri);
+                if (typeof it.label === 'string') {
+                  nextPreds[it.uri] = it.label;
+                }
+              }
+            });
+            if (!isMounted) return;
+            setScarImages(nextImages);
+            setPredictionsByUri(nextPreds);
+            return; // done
+          }
+        }
+
+        // Fallback: legacy split keys
+        const raw = await AsyncStorage.getItem(SCAR_IMAGES_STORAGE_KEY);
+        if (!isMounted) return;
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) {
+            setScarImages(parsed.filter((u) => typeof u === 'string'));
+          }
+        }
+        const predsRaw = await AsyncStorage.getItem(PREDICTIONS_STORAGE_KEY);
+        if (!isMounted) return;
+        if (predsRaw) {
+          const parsedPreds = JSON.parse(predsRaw);
+          if (parsedPreds && typeof parsedPreds === 'object') {
+            const sanitized: Record<string, string> = {};
+            Object.keys(parsedPreds).forEach((k) => {
+              const v = parsedPreds[k];
+              if (typeof k === 'string' && typeof v === 'string') {
+                sanitized[k] = v;
+              }
+            });
+            setPredictionsByUri(sanitized);
+          }
+        }
+      } catch {
+        // ignore load errors
+      }
+    })();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  // Always save both images and predictions together into combined items,
+  // and also write legacy keys for backward compatibility.
+  useEffect(() => {
+    (async () => {
+      try {
+        const items = scarImages.map((uri) => ({
+          uri,
+          label: typeof predictionsByUri[uri] === 'string' ? predictionsByUri[uri] : undefined,
+        }));
+        await AsyncStorage.setItem(SCAR_ITEMS_STORAGE_KEY, JSON.stringify(items));
+        await AsyncStorage.setItem(SCAR_IMAGES_STORAGE_KEY, JSON.stringify(scarImages));
+        await AsyncStorage.setItem(PREDICTIONS_STORAGE_KEY, JSON.stringify(predictionsByUri));
+      } catch {
+        // ignore save errors
+      }
+    })();
+  }, [scarImages, predictionsByUri]);
 
   const addScarImage = useCallback((uri: string) => {
     setScarImages((prev) => [uri, ...prev]);
