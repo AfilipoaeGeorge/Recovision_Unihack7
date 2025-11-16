@@ -24,6 +24,7 @@ import { CameraCaptureModal } from '../../components/CameraCaptureModal';
 import { ScreenHeader } from '../../components/ScreenHeader';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/types';
+import { useFocusEffect } from '@react-navigation/native';
 import { useThemeColors } from '../hooks/useThemeColors';
 import { useTranslation } from '../hooks/useTranslation';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -341,40 +342,51 @@ export function ProfileScreen({ navigation }: Props) {
     [avatarUri, getProfileStorageKeyForCurrentUser, idDocumentUri],
   );
 
-  // Load profile data on mount - first from storage, then try backend
+  const fetchProfileFromBackend = useCallback(async () => {
+    try {
+      const token = await getTokenOrThrow();
+      const response = await fetch(`${API_URL}/Pacient/profile`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        // Preserve lastName and firstName from buletin when loading from /Pacient/profile
+        applyParsedData(data, true);
+        if (data?.image_url) {
+          setIdDocumentUri(data.image_url);
+        }
+      }
+    } catch (error) {
+      // Silently fail if profile data cannot be loaded from backend
+      // Data from storage will still be shown
+      console.log('Could not load profile data from backend:', error);
+    }
+  }, [applyParsedData, getTokenOrThrow]);
+
+  // Load profile data on mount - first from storage, then from backend
   useEffect(() => {
     const loadProfileData = async () => {
       // First, try to load from storage
-      const loadedFromStorage = await loadProfileDataFromStorage();
-      
-      // Then try to load from backend to get latest data
-      try {
-        const token = await getTokenOrThrow();
-        const response = await fetch(`${API_URL}/Pacient/profile`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          // Preserve lastName and firstName from buletin when loading from /Pacient/profile
-          applyParsedData(data, true);
-          if (data?.image_url) {
-            setIdDocumentUri(data.image_url);
-          }
-        }
-      } catch (error) {
-        // Silently fail if profile data cannot be loaded from backend
-        // Data from storage will still be shown
-        console.log('Could not load profile data from backend:', error);
-      }
+      await loadProfileDataFromStorage();
+      // Then always try to load latest data from backend
+      await fetchProfileFromBackend();
     };
 
     loadProfileData();
     // Check file status on mount
     checkFileStatus();
-  }, [getTokenOrThrow, applyParsedData, loadProfileDataFromStorage, checkFileStatus]);
+  }, [fetchProfileFromBackend, loadProfileDataFromStorage, checkFileStatus]);
+
+  // Re-fetch profile every time the screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      fetchProfileFromBackend();
+      checkFileStatus();
+    }, [fetchProfileFromBackend, checkFileStatus]),
+  );
 
   const fetchParsedData = useCallback(
     async (token: string) => {
@@ -525,13 +537,16 @@ export function ProfileScreen({ navigation }: Props) {
         return;
       }
 
+      // După salvare, reîncarcă profilul din backend ca să fie sigur că UI + storage au datele noi
+      await fetchProfileFromBackend();
+
       Alert.alert(t('profile.saved'), t('profile.savedMessage'));
     } catch (error: any) {
       const message =
         error?.message || 'A apărut o eroare la salvarea profilului. Te rugăm să încerci din nou.';
       Alert.alert(t('profile.error.title'), message);
     }
-  }, [form, getTokenOrThrow, t]);
+  }, [form, getTokenOrThrow, t, fetchProfileFromBackend]);
 
   const handlePick = useCallback(
     async (source: 'camera' | 'library', target: 'avatar' | 'document') => {
