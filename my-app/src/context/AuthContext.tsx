@@ -43,6 +43,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLoggedIn(false);
     try {
       await AsyncStorage.removeItem(STORAGE_KEY);
+      // Remove auth token and user data, but keep profile data
+      await AsyncStorage.removeItem('@authToken');
+      await AsyncStorage.removeItem('@userData');
     } catch {
       // ignore persistence errors
     }

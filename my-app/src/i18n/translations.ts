@@ -99,6 +99,13 @@ export type TranslationKey =
   | 'profile.permission.gallery'
   | 'profile.error.title'
   | 'profile.error.message'
+  | 'profile.upload.uploading'
+  | 'profile.upload.processing'
+  | 'profile.upload.fetching'
+  | 'profile.upload.success'
+  | 'profile.upload.successTitle'
+  | 'profile.document.status.loaded'
+  | 'profile.document.status.notLoaded'
   | 'currentSurgery.modal.title'
   | 'currentSurgery.modal.subtitle'
   | 'currentSurgery.modal.camera'
@@ -239,6 +246,13 @@ export const translations: Record<'en' | 'ro', Record<TranslationKey, string>> =
     'profile.permission.gallery': 'Gallery access is required.',
     'profile.error.title': 'Something went wrong',
     'profile.error.message': 'Please try again in a moment.',
+    'profile.upload.uploading': 'Uploading document...',
+    'profile.upload.processing': 'Waiting for document processing...',
+    'profile.upload.fetching': 'Fetching extracted information...',
+    'profile.upload.success': 'Data has been automatically filled.',
+    'profile.upload.successTitle': 'Success',
+    'profile.document.status.loaded': 'Loaded',
+    'profile.document.status.notLoaded': 'Not loaded',
     'currentSurgery.modal.title': 'Add scar photo',
     'currentSurgery.modal.subtitle': 'Choose how you want to record the latest incision update.',
     'currentSurgery.modal.camera': 'Open camera',
@@ -382,6 +396,13 @@ export const translations: Record<'en' | 'ro', Record<TranslationKey, string>> =
     'profile.permission.gallery': 'Accesul la galerie este necesar.',
     'profile.error.title': 'Ceva nu a mers bine',
     'profile.error.message': 'Te rugăm să încerci din nou într-un moment.',
+    'profile.upload.uploading': 'Încărcăm documentul...',
+    'profile.upload.processing': 'Așteptăm procesarea documentului...',
+    'profile.upload.fetching': 'Preluăm informațiile extrase...',
+    'profile.upload.success': 'Datele au fost completate automat.',
+    'profile.upload.successTitle': 'Succes',
+    'profile.document.status.loaded': 'Încărcat',
+    'profile.document.status.notLoaded': 'Neîncărcat',
     'currentSurgery.modal.title': 'Adaugă poză cu cicatrice',
     'currentSurgery.modal.subtitle': 'Alege cum vrei să înregistrezi ultima actualizare a inciziei.',
     'currentSurgery.modal.camera': 'Deschide camera',
