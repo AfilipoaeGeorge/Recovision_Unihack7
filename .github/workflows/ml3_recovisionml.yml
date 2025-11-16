@@ -60,4 +60,5 @@ jobs:
         with:
           app-name: 'recovisionml'
           slot-name: 'Production'
-          package: ./model
+          package: .
+
